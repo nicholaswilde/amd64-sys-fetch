@@ -1,6 +1,8 @@
 ---
 version: '3'
 
+vars:
+  NAME: loadavg
 
 tasks:
   deps:
@@ -13,17 +15,30 @@ tasks:
     desc: Assemble
     dir: src
     cmds:
-      - nasm -f elf64 loadavg.asm -o loadavg.o
+      - nasm -f elf64 {{.NAME}}.asm -o {{.NAME}}.o
   link:
     desc: Link
     dir: src
     cmds:
-      - ld loadavg.o -o loadavg
+      - ld {{.NAME}}.o -o {{.NAME}}
   run:
     desc: Run
     dir: src
     cmds:
-      - ./loadavg
+      - ./{{.NAME}}
+  rosetta-amd64:
+    desc: Compile rosetta.c for amd64
+    dir: ref
+    cmds:
+      - gcc -o rosetta-amd64 rosetta.c
+      - gcc -S -o rosetta-amd64.s rosetta.c
+  view-rosetta-asm:
+    desc: View the generated assembly for rosetta.c
+    preconditions:
+      - sh: test -f ref/rosetta-amd64.s
+        msg: "Run 'task rosetta-amd64' first to generate the assembly listing."
+    cmds:
+      - command -v bat > /dev/null && bat ref/rosetta-amd64.s || cat ref/rosetta-amd64.s
   default:
     cmds:
       - task -l
