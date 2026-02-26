@@ -1,4 +1,4 @@
-# :rocket: amd64-sys-fetch
+# :rocket: amd64-sys-fetch :zap:
 
 **`amd64-sys-fetch`** is a fast, dependency-free CLI tool designed for headless Linux environments. Bypassing standard libraries entirely, this project interacts directly with the Linux kernel using x86_64 system calls to extract and display real-time system metrics. 
 
@@ -9,6 +9,48 @@ By reading directly from virtual files like `/proc/loadavg` and parsing the data
 * **Zero Dependencies:** Runs natively without the C standard library (libc) or any external package requirements.
 * **Direct Kernel I/O:** Utilizes native Linux system calls (via the `syscall` instruction) for all file operations and terminal output.
 * **Low Overhead:** Executes instantly, making it a perfectly lightweight monitoring tool for Debian servers.
+
+## :package: Installation
+
+This project requires **NASM** and standard build tools. On Debian/Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install nasm build-essential
+```
+
+If you have [Task](https://taskfile.dev/) installed, you can also run:
+
+```bash
+task deps
+```
+
+## :hammer_and_wrench: Development
+
+### Using Task (Recommended)
+
+To assemble, link, and run the tool in one command:
+
+```bash
+task build-run
+```
+
+### Manual Build
+
+If you prefer to run the commands manually:
+
+1. **Assemble:** Convert the source code into an object file.
+   ```bash
+   nasm -f elf64 src/loadavg.asm -o src/loadavg.o
+   ```
+2. **Link:** Create the final executable.
+   ```bash
+   ld src/loadavg.o -o src/loadavg
+   ```
+3. **Run:**
+   ```bash
+   ./src/loadavg
+   ```
 
 ## :books: Learning & Reference
 
@@ -35,7 +77,8 @@ For Linux on **x86_64**, system calls are invoked using the `syscall` instructio
 | **Argument 6** | `r9` |
 | **Return Value** | `rax` |
 
-> **Note:** The `syscall` instruction clobbers `rcx` and `r11`.
+> [!NOTE]
+> The `syscall` instruction clobbers `rcx` and `r11`.
 
 ### :hammer_and_wrench: Common Syscalls
 | %rax | Name | %rdi | %rsi | %rdx | Description |
@@ -424,9 +467,29 @@ For a complete, searchable, and up-to-date list with full argument details, refe
 | **459** | `lsm_get_self_attr` | Get LSM attributes of current process. |
 | **460** | `lsm_set_self_attr` | Set LSM attributes of current process. |
 | **461** | `lsm_list_modules` | List available Security Modules. |
-| **462** | `mseal` | Seal memory area to prevent modification. |
-
 </details>
+
+## :file_folder: NASM Section Reference
+
+*   **`.text`**: Contains the actual executable code.
+*   **`.data`**: Used for declaring initialized data or constants.
+*   **`.bss`** (**Block Started by Symbol**): Used for declaring uninitialized variables. This section does not take up space in the executable file.
+
+## :memo: NASM Data Declaration Directives
+
+The following directives are used in the `.data` section to declare and initialize storage space for variables.
+
+| Directive | Purpose | Standard Size |
+| :--- | :--- | :--- |
+| **`DB`** | Define Byte | 1 byte |
+| **`DW`** | Define Word | 2 bytes |
+| **`DD`** | Define Doubleword | 4 bytes |
+| **`DQ`** | Define Quadword | 8 bytes |
+| **`DT`** | Define Ten Bytes | 10 bytes |
+| **`DDQ`** | Define Double Quadword | 16 bytes |
+| **`DO`** | Define Octoword | 16 bytes |
+| **`DY`** | Define Y-word | 32 bytes |
+| **`DZ`** | Define Z-word | 64 bytes |
 
 ## :balance_scale: License
 

@@ -1,3 +1,16 @@
+;------------------------------------------------------------------------------
+;
+; amd64-sys-fetch (loadavg.asm)
+; -----------------------------
+; A fast, dependency-free CLI tool to extract and display real-time Linux load
+; averages by reading directly from /proc/loadavg using x86_64 system calls.
+;
+; @author Nicholas Wilde, 0xb299a622
+; @date Thursday, February 26, 2026
+; @version 0.1.0
+;
+;------------------------------------------------------------------------------
+
 global _start
 
 section .data

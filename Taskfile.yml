@@ -26,6 +26,12 @@ tasks:
     dir: src
     cmds:
       - ./{{.NAME}}
+  build-run:
+    desc: Assemble, link, and run the tool
+    cmds:
+      - task: assy
+      - task: link
+      - task: run
   rosetta-amd64:
     desc: Compile rosetta.c for amd64
     dir: ref
