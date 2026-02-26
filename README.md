@@ -499,4 +499,4 @@ The following directives are used in the `.data` section to declare and initiali
 
 ## :pencil: Author
 
-​This project was started in 2023 by [​Nicholas Wilde​](https://github.com/nicholaswilde/).
+This project was started in 2026 by [Nicholas Wilde](https://github.com/nicholaswilde/).
