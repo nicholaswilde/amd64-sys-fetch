@@ -1,16 +1,16 @@
-# amd64-sys-fetch
+# :rocket: amd64-sys-fetch
 
 **`amd64-sys-fetch`** is a fast, dependency-free CLI tool designed for headless Linux environments. Bypassing standard libraries entirely, this project interacts directly with the Linux kernel using x86_64 system calls to extract and display real-time system metrics. 
 
 By reading directly from virtual files like `/proc/loadavg` and parsing the data in pure NASM assembly, this tool provides a hyper-optimized way to monitor server health without the overhead of heavy scripts or subshells.
 
-## Key Features
+## :sparkles: Key Features
 * **Pure Assembly:** Written strictly in x86_64 assembly using NASM, giving absolute control over memory and 64-bit CPU registers.
 * **Zero Dependencies:** Runs natively without the C standard library (libc) or any external package requirements.
 * **Direct Kernel I/O:** Utilizes native Linux system calls (via the `syscall` instruction) for all file operations and terminal output.
 * **Low Overhead:** Executes instantly, making it a perfectly lightweight monitoring tool for Debian servers.
 
-## Learning & Reference
+## :books: Learning & Reference
 
 To support the transition from C to x86_64 assembly, this project includes a reference snippet from the [Rosetta Stone](https://github.com/lowleveltv/rosetta-stone) project.
 
@@ -19,11 +19,11 @@ To support the transition from C to x86_64 assembly, this project includes a ref
 
 Use these artifacts to compare high-level C logic with its low-level assembly implementation on the x86_64 architecture.
 
-## x86_64 System Call Reference
+## :computer: x86_64 System Call Reference
 
 For Linux on **x86_64**, system calls are invoked using the `syscall` instruction.
 
-### Register Usage
+### :clipboard: Register Usage
 | Role | Register |
 | :--- | :--- |
 | **Syscall Number** | `rax` |
@@ -37,7 +37,7 @@ For Linux on **x86_64**, system calls are invoked using the `syscall` instructio
 
 > **Note:** The `syscall` instruction clobbers `rcx` and `r11`.
 
-### Common Syscalls
+### :hammer_and_wrench: Common Syscalls
 | %rax | Name | %rdi | %rsi | %rdx | Description |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **0** | `read` | `unsigned int fd` | `char *buf` | `size_t count` | Read data from a file descriptor into a buffer. |
@@ -46,7 +46,7 @@ For Linux on **x86_64**, system calls are invoked using the `syscall` instructio
 | **3** | `close` | `unsigned int fd` | - | - | Close an open file descriptor. |
 | **60** | `exit` | `int error_code` | - | - | Terminate the calling process. |
 
-### Other Available Syscalls (Uncommon)
+### :mag: Other Available Syscalls (Uncommon)
 
 For a complete, searchable, and up-to-date list with full argument details, refer to the [Online x86_64 Syscall Table](https://filippo.io/linux-syscall-table-x86_64/).
 
@@ -427,3 +427,13 @@ For a complete, searchable, and up-to-date list with full argument details, refe
 | **462** | `mseal` | Seal memory area to prevent modification. |
 
 </details>
+
+## :balance_scale: License
+
+​[​Apache License 2.0](./LICENSE)
+
+---
+
+## :pencil: Author
+
+​This project was started in 2023 by [​Nicholas Wilde​](https://github.com/nicholaswilde/).
