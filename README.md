@@ -52,6 +52,29 @@ If you prefer to run the commands manually:
    ./src/loadavg
    ```
 
+### Debugging
+
+To assemble with debug symbols and start a [GDB](https://www.sourceware.org/gdb/) session:
+
+```bash
+task dbg
+```
+
+Once inside the GDB session, you can use the following commands to step through the program:
+
+```gdb
+(gdb) break _start   # Set a breakpoint at the entry point
+(gdb) run            # Start execution
+(gdb) stepi          # Step one instruction at a time
+(gdb) <enter>        # Repeat the previous command (stepi)
+(gdb) info registers # Show all register values
+(gdb) print $rax     # Print the value of a specific register (e.g., rax)
+(gdb) x/s &filepath  # Examine the filepath as a string
+(gdb) x/16xb &filepath # Examine 16 bytes of memory at filepath in hex
+(gdb) x/64xb &buffer # Examine 64 bytes of the buffer in hex
+(gdb) x/s &buffer    # Examine the buffer as a string
+```
+
 ## :books: Learning & Reference
 
 To support the transition from C to x86_64 assembly, this project includes a reference snippet from the [Rosetta Stone](https://github.com/lowleveltv/rosetta-stone) project.

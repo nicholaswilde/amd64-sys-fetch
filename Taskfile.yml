@@ -32,6 +32,13 @@ tasks:
       - task: assy
       - task: link
       - task: run
+  dbg:
+    desc: Assemble, link, and debug the tool
+    dir: src
+    cmds:
+      - nasm -f elf64 -g -F dwarf {{.NAME}}.asm -o {{.NAME}}.o
+      - ld {{.NAME}}.o -o amd64-sys-fetch
+      - gdb ./amd64-sys-fetch
   rosetta-amd64:
     desc: Compile rosetta.c for amd64
     dir: ref
