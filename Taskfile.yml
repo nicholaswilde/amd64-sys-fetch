@@ -49,16 +49,25 @@ tasks:
 
   inspect:bin:amd64:
     desc: Disassemble the amd64 binary using objdump
+    preconditions:
+      - sh: command -v objdump > /dev/null
+        msg: "objdump is not installed. Please install it with 'sudo apt install binutils'."
     cmds:
       - objdump -d bin/{{.BIN}}
 
   inspect:obj:amd64:
     desc: Disassemble the amd64 object file using objdump
+    preconditions:
+      - sh: command -v objdump > /dev/null
+        msg: "objdump is not installed. Please install it with 'sudo apt install binutils'."
     cmds:
       - objdump -d src/x86_64/{{.NAME}}.o
 
   strace:amd64:
     desc: Trace system calls of the amd64 binary using strace
+    preconditions:
+      - sh: command -v strace > /dev/null
+        msg: "strace is not installed. Please install it with 'sudo apt install strace'."
     cmds:
       - strace ./bin/{{.BIN}}
 
