@@ -26,12 +26,18 @@ tasks:
 
   assy:amd64:
     desc: Assemble the amd64 source code into an object file
+    preconditions:
+      - sh: command -v as > /dev/null
+        msg: "The GNU Assembler (as) is not installed. Please install it with 'sudo apt install binutils'."
     dir: src/x86_64
     cmds:
       - as {{.NAME}}.S -o {{.NAME}}.o
 
   link:amd64:
     desc: Link the amd64 object file into the final executable
+    preconditions:
+      - sh: command -v ld > /dev/null
+        msg: "The GNU Linker (ld) is not installed. Please install it with 'sudo apt install binutils'."
     cmds:
       - mkdir -p bin
       - ld src/x86_64/{{.NAME}}.o -o bin/{{.BIN}}
@@ -79,6 +85,13 @@ tasks:
 
   dbg:amd64:
     desc: Build with debug symbols and start GDB for amd64
+    preconditions:
+      - sh: command -v as > /dev/null
+        msg: "The GNU Assembler (as) is not installed. Please install it with 'sudo apt install binutils'."
+      - sh: command -v ld > /dev/null
+        msg: "The GNU Linker (ld) is not installed. Please install it with 'sudo apt install binutils'."
+      - sh: command -v gdb > /dev/null
+        msg: "GDB is not installed. Please install it with 'sudo apt install gdb'."
     cmds:
       - mkdir -p bin
       - as -g src/x86_64/{{.NAME}}.S -o src/x86_64/{{.NAME}}.o
@@ -87,6 +100,9 @@ tasks:
 
   rosetta-amd64:
     desc: Compile and generate assembly listing for the C reference implementation
+    preconditions:
+      - sh: command -v gcc > /dev/null
+        msg: "GCC is not installed. Please install it with 'sudo apt install build-essential'."
     dir: ref
     cmds:
       - gcc -o rosetta-amd64 rosetta.c
