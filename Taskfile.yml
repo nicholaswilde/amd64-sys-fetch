@@ -3,13 +3,15 @@ version: '3'
 vars:
   NAME: main
   BIN: sys-fetch
+  CROSS_ARM64: aarch64-linux-gnu-
 
 tasks:
   clean:
     desc: Remove all build artifacts and intermediate files
     cmds:
-      - rm -rf bin/{{.BIN}}
+      - rm -rf bin/{{.BIN}}*
       - rm -f src/x86_64/*.o
+      - rm -f src/aarch64/*.o
       - rm -f ref/rosetta-amd64 ref/rosetta-amd64.s
 
   deps:amd64:
@@ -23,6 +25,10 @@ tasks:
     cmds:
       - sudo apt update
       - sudo apt install -y binutils-aarch64-linux-gnu build-essential gdb
+
+  # ---------------------------------------------------------------------------
+  # amd64 (x86_64) Tasks
+  # ---------------------------------------------------------------------------
 
   assy:amd64:
     desc: Assemble the amd64 source code into an object file
@@ -40,7 +46,7 @@ tasks:
         msg: "The GNU Linker (ld) is not installed. Please install it with 'sudo apt install binutils'."
     cmds:
       - mkdir -p bin
-      - ld src/x86_64/{{.NAME}}.o -o bin/{{.BIN}}
+      - ld src/x86_64/{{.NAME}}.o -o bin/{{.BIN}}-amd64
 
   build:amd64:
     desc: Assemble and link the amd64 tool
@@ -51,7 +57,7 @@ tasks:
   run:amd64:
     desc: Execute the amd64 binary
     cmds:
-      - ./bin/{{.BIN}}
+      - ./bin/{{.BIN}}-amd64
 
   inspect:bin:amd64:
     desc: Disassemble the amd64 binary using objdump
@@ -59,7 +65,7 @@ tasks:
       - sh: command -v objdump > /dev/null
         msg: "objdump is not installed. Please install it with 'sudo apt install binutils'."
     cmds:
-      - objdump -d bin/{{.BIN}}
+      - objdump -d bin/{{.BIN}}-amd64
 
   inspect:obj:amd64:
     desc: Disassemble the amd64 object file using objdump
@@ -75,9 +81,9 @@ tasks:
       - sh: command -v strace > /dev/null
         msg: "strace is not installed. Please install it with 'sudo apt install strace'."
     cmds:
-      - strace ./bin/{{.BIN}}
+      - strace ./bin/{{.BIN}}-amd64
 
-  build-run:
+  build-run:amd64:
     desc: Build and run the amd64 tool
     cmds:
       - task: build:amd64
@@ -95,8 +101,78 @@ tasks:
     cmds:
       - mkdir -p bin
       - as -g src/x86_64/{{.NAME}}.S -o src/x86_64/{{.NAME}}.o
-      - ld src/x86_64/{{.NAME}}.o -o bin/{{.BIN}}
-      - gdb bin/{{.BIN}}
+      - ld src/x86_64/{{.NAME}}.o -o bin/{{.BIN}}-amd64
+      - gdb bin/{{.BIN}}-amd64
+
+  # ---------------------------------------------------------------------------
+  # arm64 (aarch64) Tasks
+  # ---------------------------------------------------------------------------
+
+  assy:arm64:
+    desc: Assemble the arm64 source code into an object file
+    preconditions:
+      - sh: command -v {{.CROSS_ARM64}}as > /dev/null
+        msg: "The ARM64 GNU Assembler is not installed. Please install it with 'task deps:arm64'."
+    dir: src/aarch64
+    cmds:
+      - "{{.CROSS_ARM64}}as {{.NAME}}.S -o {{.NAME}}.o"
+
+  link:arm64:
+    desc: Link the arm64 object file into the final executable
+    preconditions:
+      - sh: command -v {{.CROSS_ARM64}}ld > /dev/null
+        msg: "The ARM64 GNU Linker is not installed. Please install it with 'task deps:arm64'."
+    cmds:
+      - mkdir -p bin
+      - "{{.CROSS_ARM64}}ld src/aarch64/{{.NAME}}.o -o bin/{{.BIN}}-arm64"
+
+  build:arm64:
+    desc: Assemble and link the arm64 tool
+    cmds:
+      - task: assy:arm64
+      - task: link:arm64
+
+  run:arm64:
+    desc: Execute the arm64 binary
+    preconditions:
+      - sh: uname -m | grep -q aarch64 || command -v qemu-aarch64 > /dev/null
+        msg: "You are not on an ARM64 host. Please install 'qemu-user' to run ARM64 binaries."
+    cmds:
+      - "uname -m | grep -q aarch64 && ./bin/{{.BIN}}-arm64 || qemu-aarch64 ./bin/{{.BIN}}-arm64"
+
+  inspect:bin:arm64:
+    desc: Disassemble the arm64 binary using objdump
+    preconditions:
+      - sh: command -v {{.CROSS_ARM64}}objdump > /dev/null
+        msg: "ARM64 objdump is not installed. Please install it with 'task deps:arm64'."
+    cmds:
+      - "{{.CROSS_ARM64}}objdump -d bin/{{.BIN}}-arm64"
+
+  inspect:obj:arm64:
+    desc: Disassemble the arm64 object file using objdump
+    preconditions:
+      - sh: command -v {{.CROSS_ARM64}}objdump > /dev/null
+        msg: "ARM64 objdump is not installed. Please install it with 'task deps:arm64'."
+    cmds:
+      - "{{.CROSS_ARM64}}objdump -d src/aarch64/{{.NAME}}.o"
+
+  strace:arm64:
+    desc: Trace system calls of the arm64 binary using strace
+    preconditions:
+      - sh: uname -m | grep -q aarch64
+        msg: "strace for ARM64 only works on an ARM64 host."
+    cmds:
+      - strace ./bin/{{.BIN}}-arm64
+
+  build-run:arm64:
+    desc: Build and run the arm64 tool
+    cmds:
+      - task: build:arm64
+      - task: run:arm64
+
+  # ---------------------------------------------------------------------------
+  # Rosetta Reference & Utility Tasks
+  # ---------------------------------------------------------------------------
 
   rosetta-amd64:
     desc: Compile and generate assembly listing for the C reference implementation
