@@ -17,7 +17,7 @@
 .macro print_reg reg, len
     mov x8, #64             // sys_write
     mov x0, #1              // stdout
-    mov x1, eg            // Pointer from register
+    mov x1, \reg            // Pointer from register
     mov x2, \len            // Length
     svc #0
 .endm
@@ -25,8 +25,7 @@
 .data
     load_path: .asciz "/proc/loadavg"    // Null-terminated path
     
-    load_err:  .ascii "Error: Could not open /proc/loadavg
-"
+    load_err:  .ascii "Error: Could not open /proc/loadavg\n"
     .equ load_err_len, . - load_err
 
     prefix:    .ascii "Load Average: \033[1;36m"
@@ -38,8 +37,7 @@
     sep2:      .ascii "\033[0m (5m) | \033[1;36m"
     .equ sep2_len, . - sep2
 
-    suffix:    .ascii "\033[0m (15m)
-"
+    suffix:    .ascii "\033[0m (15m)\n"
     .equ suffix_len, . - suffix
 
 .bss
