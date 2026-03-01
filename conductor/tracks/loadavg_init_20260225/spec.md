@@ -1,7 +1,7 @@
 # Specification: loadavg_init_20260225
 
 ## Problem Statement
-The project `amd64-sys-fetch` lacks a formal build and verification system, and the documentation for the system calls used in `src/x86_64/main.S` is not centralized for quick reference during learning.
+The project `sys-fetch` lacks a formal build and verification system, and the documentation for the system calls used in `src/x86_64/main.S` is not centralized for quick reference during learning.
 
 ## Goals
 1.  **Build Automation:** Simplify the multi-step `assy` and `link` process into a single `build` command.
