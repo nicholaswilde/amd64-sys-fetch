@@ -27,6 +27,35 @@ tasks:
       - sudo apt install -y binutils-aarch64-linux-gnu build-essential gdb
 
   # ---------------------------------------------------------------------------
+  # Generic Tasks
+  # ---------------------------------------------------------------------------
+
+  build:
+    desc: Build the tool for the current architecture
+    cmds:
+      - |
+        if [ "$(uname -m)" = "x86_64" ]; then
+          task build:amd64
+        elif [ "$(uname -m)" = "aarch64" ]; then
+          task build:arm64
+        else
+          echo "Unsupported architecture: $(uname -m)"
+          exit 1
+        fi
+
+  test:
+    desc: Run automated tests
+    cmds:
+      - task build
+      - echo "Running tests..."
+      - |
+        if [ -f tests/verify_loadavg.sh ]; then
+          bash tests/verify_loadavg.sh
+        else
+          echo "Test script not found. Skipping."
+        fi
+
+  # ---------------------------------------------------------------------------
   # amd64 (x86_64) Tasks
   # ---------------------------------------------------------------------------
 
