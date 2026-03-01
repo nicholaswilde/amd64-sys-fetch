@@ -1,12 +1,12 @@
 # Implementation Plan: loadavg_init_20260225
 
 ## Phase 1: Build & Documentation Scaffolding
-- [ ] Task: Create `docs/syscalls.md` with detailed register maps and opcodes for project system calls.
-    - [ ] Research and document `sys_open` (2).
-    - [ ] Research and document `sys_read` (0).
-    - [ ] Research and document `sys_write` (1).
-    - [ ] Research and document `sys_close` (3).
-    - [ ] Research and document `sys_exit` (60).
+- [x] Task: Create `docs/syscalls.md` with detailed register maps and opcodes for project system calls. [1e1ccbb]
+    - [x] Research and document `sys_open` (2).
+    - [x] Research and document `sys_read` (0).
+    - [x] Research and document `sys_write` (1).
+    - [x] Research and document `sys_close` (3).
+    - [x] Research and document `sys_exit` (60).
 - [ ] Task: Enhance `Taskfile.yml` with a `build` task that chains `assy` and `link`.
     - [ ] Add `build` task.
     - [ ] Add `clean` task to remove object files and binary.
