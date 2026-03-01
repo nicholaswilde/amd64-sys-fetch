@@ -12,6 +12,7 @@ tasks:
       - rm -rf bin/
       - rm -f src/x86_64/*.o
       - rm -f src/aarch64/*.o
+      - rm -f src/armv7/*.o
       - rm -f ref/rosetta-amd64 ref/rosetta-amd64.s
 
   deps:amd64:
@@ -26,6 +27,12 @@ tasks:
       - sudo apt update
       - sudo apt install -y binutils-aarch64-linux-gnu build-essential gdb
 
+  deps:armv7:
+    desc: Install build dependencies for armv7 (armhf)
+    cmds:
+      - sudo apt update
+      - sudo apt install -y binutils build-essential gdb
+
   # ---------------------------------------------------------------------------
   # Generic Tasks
   # ---------------------------------------------------------------------------
@@ -34,12 +41,15 @@ tasks:
     desc: Build the tool for the current architecture
     cmds:
       - |
-        if [ "$(uname -m)" = "x86_64" ]; then
+        ARCH=$(uname -m)
+        if [ "$ARCH" = "x86_64" ]; then
           task build:amd64
-        elif [ "$(uname -m)" = "aarch64" ]; then
+        elif [ "$ARCH" = "aarch64" ]; then
           task build:arm64
+        elif [[ "$ARCH" =~ ^armv7 ]]; then
+          task build:armv7
         else
-          echo "Unsupported architecture: $(uname -m)"
+          echo "Unsupported architecture: $ARCH"
           exit 1
         fi
 
@@ -49,10 +59,19 @@ tasks:
       - task build
       - echo "Running tests..."
       - |
-        if [ -f tests/verify_loadavg.sh ]; then
-          bash tests/verify_loadavg.sh
+        ARCH=$(uname -m)
+        if [ "$ARCH" = "x86_64" ]; then
+          SCRIPT="tests/verify_loadavg.sh"
+        elif [ "$ARCH" = "aarch64" ]; then
+          SCRIPT="tests/verify_loadavg.sh"
+        elif [[ "$ARCH" =~ ^armv7 ]]; then
+          SCRIPT="tests/verify_armv7.sh"
+        fi
+        
+        if [ -n "$SCRIPT" ] && [ -f "$SCRIPT" ]; then
+          bash "$SCRIPT"
         else
-          echo "Test script not found. Skipping."
+          echo "Test script not found or not applicable for $ARCH. Skipping."
         fi
 
   # ---------------------------------------------------------------------------
@@ -198,6 +217,72 @@ tasks:
     cmds:
       - task: build:arm64
       - task: run:arm64
+
+  # ---------------------------------------------------------------------------
+  # armv7 (armhf) Tasks
+  # ---------------------------------------------------------------------------
+
+  assy:armv7:
+    desc: Assemble the armv7 source code into an object file
+    preconditions:
+      - sh: command -v as > /dev/null
+        msg: "The GNU Assembler (as) is not installed. Please install it with 'task deps:armv7'."
+    dir: src/armv7
+    cmds:
+      - as {{.NAME}}.S -o {{.NAME}}.o
+
+  link:armv7:
+    desc: Link the armv7 object file into the final executable
+    preconditions:
+      - sh: command -v ld > /dev/null
+        msg: "The GNU Linker (ld) is not installed. Please install it with 'task deps:armv7'."
+    cmds:
+      - mkdir -p bin/armv7
+      - ld src/armv7/{{.NAME}}.o -o bin/armv7/{{.BIN}}
+
+  build:armv7:
+    desc: Assemble and link the armv7 tool
+    cmds:
+      - task: assy:armv7
+      - task: link:armv7
+
+  run:armv7:
+    desc: Execute the armv7 binary
+    preconditions:
+      - sh: uname -m | grep -q armv7 || command -v qemu-arm > /dev/null
+        msg: "You are not on an ARMv7 host. Please install 'qemu-user' to run ARMv7 binaries."
+    cmds:
+      - "uname -m | grep -q armv7 && ./bin/armv7/{{.BIN}} || qemu-arm ./bin/armv7/{{.BIN}}"
+
+  inspect:bin:armv7:
+    desc: Disassemble the armv7 binary using objdump
+    preconditions:
+      - sh: command -v objdump > /dev/null
+        msg: "objdump is not installed. Please install it with 'task deps:armv7'."
+    cmds:
+      - objdump -d bin/armv7/{{.BIN}}
+
+  inspect:obj:armv7:
+    desc: Disassemble the armv7 object file using objdump
+    preconditions:
+      - sh: command -v objdump > /dev/null
+        msg: "objdump is not installed. Please install it with 'task deps:armv7'."
+    cmds:
+      - objdump -d src/armv7/{{.NAME}}.o
+
+  strace:armv7:
+    desc: Trace system calls of the armv7 binary using strace
+    preconditions:
+      - sh: uname -m | grep -q armv7
+        msg: "strace for ARMv7 only works on an ARMv7 host."
+    cmds:
+      - strace ./bin/armv7/{{.BIN}}
+
+  build-run:armv7:
+    desc: Build and run the armv7 tool
+    cmds:
+      - task: build:armv7
+      - task: run:armv7
 
   # ---------------------------------------------------------------------------
   # Rosetta Reference & Utility Tasks
