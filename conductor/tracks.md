@@ -36,3 +36,6 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [ ] **Track: Implement Memory detection**
   *Link: [./tracks/feature_memory_20260301/](./tracks/feature_memory_20260301/)*
+
+- [ ] **Track: Create an architecture for armv7 as well. It should have the same structure and tests and tasks as the other architectures.**
+  *Link: [./tracks/feature_armv7_20260301/](./tracks/feature_armv7_20260301/)*
