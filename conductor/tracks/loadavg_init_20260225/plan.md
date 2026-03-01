@@ -16,5 +16,5 @@
 - [x] Task: Implement a shell-based verification script `tests/verify_loadavg.sh`. [132228b]
     - [x] Check if `bin/sys-fetch` exists.
     - [x] Check if output of `bin/sys-fetch` matches expected format (contains three space-separated numbers).
-- [ ] Task: Add a `test` task to `Taskfile.yml` that invokes the verification script.
+- [x] Task: Add a `test` task to `Taskfile.yml` that invokes the verification script. [92b8554]
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Automated Verification' (Protocol in workflow.md)
