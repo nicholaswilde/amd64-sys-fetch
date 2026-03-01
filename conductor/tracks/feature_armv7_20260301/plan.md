@@ -16,7 +16,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Build & Execution Automation' (Protocol in workflow.md) [e524ae1]
 
 ## Phase 3: Automated Verification
-- [ ] Task: Implement `tests/verify_armv7.sh` verification script.
+- [~] Task: Implement `tests/verify_armv7.sh` verification script.
     - [ ] Write Red Phase: Create script that fails initially.
     - [ ] Write Green Phase: Ensure script passes when ARMv7 binary exists and output is correct.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Automated Verification' (Protocol in workflow.md)
