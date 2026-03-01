@@ -7,9 +7,9 @@
     - [x] Research and document `sys_write` (1).
     - [x] Research and document `sys_close` (3).
     - [x] Research and document `sys_exit` (60).
-- [ ] Task: Enhance `Taskfile.yml` with a `build` task that chains `assy` and `link`.
-    - [ ] Add `build` task.
-    - [ ] Add `clean` task to remove object files and binary.
+- [x] Task: Enhance `Taskfile.yml` with a `build` task that chains `assy` and `link`. [92b8554]
+    - [x] Add `build` task.
+    - [x] Add `clean` task to remove object files and binary.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Build & Documentation Scaffolding' (Protocol in workflow.md)
 
 ## Phase 2: Automated Verification
