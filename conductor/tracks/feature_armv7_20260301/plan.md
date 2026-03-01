@@ -15,8 +15,8 @@
     - [x] Update generic `test` task to support `armv7l`.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Build & Execution Automation' (Protocol in workflow.md) [e524ae1]
 
-## Phase 3: Automated Verification
+## Phase 3: Automated Verification [checkpoint: df325be]
 - [x] Task: Implement `tests/verify_armv7.sh` verification script. [31be8be]
     - [x] Write Red Phase: Create script that fails initially.
     - [x] Write Green Phase: Ensure script passes when ARMv7 binary exists and output is correct.
-- [~] Task: Conductor - User Manual Verification 'Phase 3: Automated Verification' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Automated Verification' (Protocol in workflow.md) [df325be]
