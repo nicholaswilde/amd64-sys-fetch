@@ -4,7 +4,7 @@ vars:
   NAME: main
   BIN: sys-fetch
   CROSS_ARM64: aarch64-linux-gnu-
-
+  CROSS_ARMV7: arm-linux-gnueabihf-
 tasks:
   clean:
     desc: Remove all build artifacts and intermediate files
@@ -229,7 +229,7 @@ tasks:
         msg: "The GNU Assembler (as) is not installed. Please install it with 'task deps:armv7'."
     dir: src/armv7
     cmds:
-      - as {{.NAME}}.S -o {{.NAME}}.o
+      - "{{.CROSS_ARMV7}}as {{.NAME}}.S -o {{.NAME}}.o"
 
   link:armv7:
     desc: Link the armv7 object file into the final executable
@@ -238,7 +238,7 @@ tasks:
         msg: "The GNU Linker (ld) is not installed. Please install it with 'task deps:armv7'."
     cmds:
       - mkdir -p bin/armv7
-      - ld src/armv7/{{.NAME}}.o -o bin/armv7/{{.BIN}}
+      - "{{.CROSS_ARMV7}}ld src/armv7/{{.NAME}}.o -o bin/armv7/{{.BIN}}"
 
   build:armv7:
     desc: Assemble and link the armv7 tool
@@ -260,7 +260,7 @@ tasks:
       - sh: command -v objdump > /dev/null
         msg: "objdump is not installed. Please install it with 'task deps:armv7'."
     cmds:
-      - objdump -d bin/armv7/{{.BIN}}
+      - "{{.CROSS_ARMV7}}objdump -d bin/armv7/{{.BIN}}"
 
   inspect:obj:armv7:
     desc: Disassemble the armv7 object file using objdump
@@ -268,7 +268,7 @@ tasks:
       - sh: command -v objdump > /dev/null
         msg: "objdump is not installed. Please install it with 'task deps:armv7'."
     cmds:
-      - objdump -d src/armv7/{{.NAME}}.o
+      - "{{.CROSS_ARMV7}}objdump -d src/armv7/{{.NAME}}.o"
 
   strace:armv7:
     desc: Trace system calls of the armv7 binary using strace
